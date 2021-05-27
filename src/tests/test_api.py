@@ -63,12 +63,12 @@ class TestAPIShutdown(TestAPIProto, TestProcessShutdown):
 
 class TestAPI(TestAPIProto):
     """Main API test case"""
-    _seed = base64.encodestring(
-        'TIGER, tiger, burning bright. In the forests of the night'
+    _seed = base64.b64encode(
+        'TIGER, tiger, burning bright. In the forests of the night'.encode('UTF-8')
     )
 
     def _add_random_address(self, label):
-        return self.api.createRandomAddress(base64.encodestring(label))
+        return self.api.createRandomAddress(base64.b64encode(label.encode('UTF-8')))
 
     def test_user_password(self):
         """Trying to connect with wrong username/password"""
@@ -177,7 +177,7 @@ class TestAPI(TestAPIProto):
         # Add known address
         self.api.addAddressBookEntry(
             'BM-2cWzSnwjJ7yRP3nLEWUV5LisTZyREWSzUK',
-            base64.encodestring('tiger_4')
+            base64.b64encode('tiger_4'.encode('UTF-8'))
         )
         # Check addressbook entry
         entries = json.loads(
@@ -185,7 +185,7 @@ class TestAPI(TestAPIProto):
         self.assertEqual(
             entries['address'], 'BM-2cWzSnwjJ7yRP3nLEWUV5LisTZyREWSzUK')
         self.assertEqual(
-            base64.decodestring(entries['label']), 'tiger_4')
+            base64.decodebytes(entries['label']), 'tiger_4')
         # Remove known address
         self.api.deleteAddressBookEntry(
             'BM-2cWzSnwjJ7yRP3nLEWUV5LisTZyREWSzUK')
@@ -201,7 +201,7 @@ class TestAPI(TestAPIProto):
             # special address, added when sqlThread starts
             if s['address'] == 'BM-GtovgYdgs7qXPkoYaRgrLFuFKz1SFpsw':
                 self.assertEqual(
-                    base64.decodestring(s['label']),
+                    base64.decodebytes(s['label']),
                     'Bitmessage new releases/announcements')
                 self.assertTrue(s['enabled'])
                 break
@@ -219,8 +219,8 @@ class TestAPI(TestAPIProto):
         """Test message sending"""
         # self.api.createDeterministicAddresses(self._seed, 1, 4)
         addr = self._add_random_address('random_2')
-        msg = base64.encodestring('test message')
-        msg_subject = base64.encodestring('test_subject')
+        msg = base64.b64encode('test message'.encode('UTF-8'))
+        msg_subject = base64.b64encode('test_subject'.encode('UTF-8'))
         ackdata = self.api.sendMessage(
             'BM-2cWzSnwjJ7yRP3nLEWUV5LisTZyREWSzUK', addr, msg_subject, msg)
         try:
@@ -278,9 +278,9 @@ class TestAPI(TestAPIProto):
     def test_send_broadcast(self):
         """Test broadcast sending"""
         addr = self._add_random_address('random_2')
-        msg = base64.encodestring('test broadcast')
+        msg = base64.b64encode('test broadcast'.encode('UTF-8'))
         ackdata = self.api.sendBroadcast(
-            addr, base64.encodestring('test_subject'), msg)
+            addr, base64.b64encode('test_subject'.encode('UTF-8')), msg)
         try:
             int(ackdata, 16)
             status = self.api.getStatus(ackdata)

@@ -2,10 +2,7 @@
 Test for network group
 """
 import unittest
-
-from .common import skip_python3
-
-skip_python3()
+import sys
 
 
 class TestNetworkGroup(unittest.TestCase):
@@ -17,7 +14,12 @@ class TestNetworkGroup(unittest.TestCase):
         from pybitmessage.protocol import network_group
 
         test_ip = '1.2.3.4'
-        self.assertEqual('\x01\x02', network_group(test_ip))
+        print("network_group(test_ip)")
+        print(network_group(test_ip))
+        if sys.version_info[0] == 3:
+            self.assertEqual('\x01\x02', network_group(test_ip))
+        else:
+            self.assertEqual('\x01\x02', network_group(test_ip))
 
         test_ip = '127.0.0.1'
         self.assertEqual('IPv4', network_group(test_ip))

@@ -13,16 +13,16 @@ import time
 from binascii import hexlify
 from struct import Struct, pack, unpack
 
-import defaults
-import highlevelcrypto
-import state
-from addresses import (
+from pybitmessage import defaults
+from pybitmessage import highlevelcrypto
+from pybitmessage import state
+from pybitmessage.addresses import (
     encodeVarint, decodeVarint, decodeAddress, varintDecodeError)
-from bmconfigparser import BMConfigParser
-from debug import logger
-from fallback import RIPEMD160Hash
-from helper_sql import sqlExecute
-from version import softwareVersion
+from pybitmessage.bmconfigparser import BMConfigParser
+from pybitmessage.debug import logger
+from pybitmessage.fallback import RIPEMD160Hash
+from pybitmessage.helper_sql import sqlExecute
+from pybitmessage.version import softwareVersion
 
 # Service flags
 #: This is a normal network node
@@ -96,12 +96,13 @@ def isBitSetWithinBitfield(fourByteString, n):
 
 def encodeHost(host):
     """Encode a given host to be used in low-level socket operations"""
+    # import pdb; pdb.set_trace()
     if host.find('.onion') > -1:
         return '\xfd\x87\xd8\x7e\xeb\x43' + base64.b32decode(
             host.split(".")[0], True)
     elif host.find(':') == -1:
         return '\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xFF\xFF' + \
-            socket.inet_aton(host)
+            socket.inet_aton(host).decode()
     return socket.inet_pton(socket.AF_INET6, host)
 
 

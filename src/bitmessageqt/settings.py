@@ -57,16 +57,9 @@ class SettingsDialog(QtGui.QDialog):
             pass
         else:
             # Append proxy types defined in plugins
-            # FIXME: this should be a function in mod:`plugin`
             for ep in pkg_resources.iter_entry_points(
                     'bitmessage.proxyconfig'):
-                try:
-                    ep.load()
-                except Exception:  # it should add only functional plugins
-                    # many possible exceptions, which are don't matter
-                    pass
-                else:
-                    self.comboBoxProxyType.addItem(ep.name)
+                self.comboBoxProxyType.addItem(ep.name)
 
         self.lineEditMaxOutboundConnections.setValidator(
             QtGui.QIntValidator(0, 8, self.lineEditMaxOutboundConnections))

@@ -69,8 +69,6 @@ class UpgradeDB(object):
             Execute SQL files and queries
         """
         try:
-            print("=======================")
-            print(file_name)
             if int(file_name) == 8:
                 res = self.cur.execute('''PRAGMA table_info('inbox');''')
                 print("""""""""""""""-----------res""""""""""""""")
@@ -139,6 +137,19 @@ class sqlThread(threading.Thread, UpgradeDB):
     def __init__(self):
         super(sqlThread, self).__init__()
         threading.Thread.__init__(self, name="SQL")
+        self.__flag = threading.Event()
+
+        # Adding for pause/resume thread
+        self.__flag = threading.Event()
+        self.__flag.set()  # Set to True
+        self.__running = threading.Event()  # Used to stop the thread identification
+        self.__running.set()  # Set running to True
+
+    def pause(self):
+        self.__flag.clear()  # Set to False to block the thread
+
+    def resume(self):
+        self.__flag.set()  # Set to True, let the thread stop blocking
 
     def run(self):  # pylint: disable=too-many-locals, too-many-branches, too-many-statements,
         # Redefinition-of-parameters-type-from-tuple-to-str, R0204, line-too-long, E501

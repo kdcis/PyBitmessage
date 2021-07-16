@@ -110,20 +110,20 @@ class TestSqlThread(unittest.TestCase):
             func_name = func.__name__
             version = func_name.rsplit('_', 1)[-1]
 
-            print("-------------=========")
-            print(version)
-            print("-------------=========")
 
             if int(version) == 8:
                 res = sqlQuery('''PRAGMA table_info('inbox');''')
                 print("""""""""""""""res""""""""""""""")
                 print(res)
 
+            # sqlThread().pause()
 
             # Update versions DB mocking
             self.initialise_database("init_version_{}".format(version))
 
-
+            print("-------------=========")
+            print(version)
+            print("-------------=========")
 
             if int(version) == 9:
                 sqlThread().create_function()
@@ -133,12 +133,12 @@ class TestSqlThread(unittest.TestCase):
                 print("""""""""""""""-----------res""""""""""""""")
                 print(res)
 
-
             # Test versions
             upgrade_db = UpgradeDB()
             upgrade_db._upgrade_one_level_sql_statement(int(version))  # pylint: disable= W0212, protected-access
             # upgrade_db.upgrade_to_latest(upgrade_db.cur, upgrade_db.conn)
             # upgrade_db.upgrade_to_latest(upgrade_db.cur, upgrade_db.conn, int(version))
+            # sqlThread().resume()
             return func(*args)  # <-- use (self, ...)
         func = self
         return wrapper
@@ -255,20 +255,20 @@ class TestSqlThread(unittest.TestCase):
         result = list(filter_table_column(res, "sighash"))
         self.assertEqual(result, ['sighash'], "Data not migrated for version 8")
 
-    # @version
-    # def test_sql_thread_version_9(self):
-    #     """
-    #         Test with version 9
-    #     """
-    #
-    #     # Assertion
-    #     res = sqlQuery(''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name='pubkeys_backup' ''')
-    #     self.assertNotEqual(res[0][0], 1, "Table pubkeys_backup not deleted")
-    #
-    #     res = sqlQuery('''PRAGMA table_info('pubkeys');''')
-    #     # res = res.fetchall()
-    #     result = list(filter_table_column(res, "address"))
-    #     self.assertEqual(result, ['address'], "Data not migrated for version 9")
+    @version
+    def test_sql_thread_version_9(self):
+        """
+            Test with version 9
+        """
+
+        # Assertion
+        res = sqlQuery(''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name='pubkeys_backup' ''')
+        self.assertNotEqual(res[0][0], 1, "Table pubkeys_backup not deleted")
+
+        res = sqlQuery('''PRAGMA table_info('pubkeys');''')
+        # res = res.fetchall()
+        result = list(filter_table_column(res, "address"))
+        self.assertEqual(result, ['address'], "Data not migrated for version 9")
 
     # @version
     # def test_sql_thread_version_10(self):

@@ -17,11 +17,13 @@ CREATE TABLE IF NOT EXISTS `sent` (
   UNIQUE(msgid) ON CONFLICT REPLACE
 ) ;
 
+DROP TABLE IF EXISTS `pubkeys`;
+
 CREATE TABLE IF NOT EXISTS `pubkeys` (
-  `hash` text,
-  `addressversion` int,
-  `transmitdata` blob,
-  `time` int,
-  `usedpersonally` text,
+  `hash` text DEFAULT NULL,
+  `addressversion` int DEFAULT NULL,
+  `transmitdata` blob DEFAULT NULL,
+  `time` int DEFAULT NULL,
+  `usedpersonally` text DEFAULT NULL
   UNIQUE(hash) ON CONFLICT REPLACE
 ) ;

@@ -12,15 +12,6 @@ The PyBitmessage startup script
 import os
 import sys
 
-try:
-    import pathmagic
-except ImportError:
-    from pybitmessage import pathmagic
-app_dir = pathmagic.setup()
-
-import depends
-depends.check_dependencies()
-
 import ctypes
 import getopt
 import multiprocessing
@@ -52,6 +43,15 @@ from singleinstance import singleinstance
 from threads import (
     set_thread_name, printLock,
     addressGenerator, objectProcessor, singleCleaner, singleWorker, sqlThread)
+
+import depends
+depends.check_dependencies()
+
+try:
+    import pathmagic
+except ImportError:
+    from pybitmessage import pathmagic
+app_dir = pathmagic.setup()
 
 
 def _fixSocket():
@@ -424,9 +424,9 @@ class Main(object):
         sys.stdout.flush()
         sys.stderr.flush()
         if not sys.platform.startswith('win'):
-            si = file(os.devnull, 'r')
-            so = file(os.devnull, 'a+')
-            se = file(os.devnull, 'a+', 0)
+            si = open(os.devnull, 'r')
+            so = open(os.devnull, 'a+')
+            se = open(os.devnull, 'a+', 0)
             os.dup2(si.fileno(), sys.stdin.fileno())
             os.dup2(so.fileno(), sys.stdout.fileno())
             os.dup2(se.fileno(), sys.stderr.fileno())
